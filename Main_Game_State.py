@@ -1,6 +1,6 @@
 import random
 import game_framework
-import Stage_state
+import Title_State
 from pico2d import *
 
 name = "MainGameState"
@@ -223,7 +223,7 @@ def handle_events():
                 if(Pause == True):
                     #game_framework.push_state(Pause_state)
                     pass
-            game_framework.quit()
+            game_framework.change_state(Title_State)
 
 
 def draw():

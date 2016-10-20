@@ -197,12 +197,12 @@ def handle_events():
                 if(Easy == True):
                     game_framework.change_state(Main_Game_State)
                     pass
-                elif(Score == True):
+                #elif(Score == True):
                     #Score_State
-                    pass
-                elif(Tip == True):
+                    #pass
+                #elif(Tip == True):
                     #Tip_State
-                    pass
+                    #pass
             #game_framework.quit()
 
 
