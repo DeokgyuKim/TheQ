@@ -41,6 +41,55 @@ def enter():
     global SoundButtonImageClick
     global ScoreButtonImageClick
     global TipButtonImageClick
+    global TitleImage
+    global PlayButtonImageOn
+    global SoundButtonImageOn
+    global ScoreButtonImageOn
+    global TipButtonImageOn
+
+    global PlayButtonImageClick
+    global SoundButtonImageClick
+    global ScoreButtonImageClick
+    global TipButtonImageClick
+    global x
+    global y
+    global PlayButton_Click
+    global SoundButton_Click
+    global ScoreButton_Click
+    global TipButton_Click
+    global PlayButton_On
+    global SoundButton_On
+    global ScoreButton_On
+    global TipButton_On
+    global Play
+    global Score
+    global Tip
+    global Count
+
+    TitleImage = None
+    PlayButtonImageOn = None
+    SoundButtonImageOn = None
+    ScoreButtonImageOn = None
+    TipButtonImageOn = None
+
+    PlayButtonImageClick = None
+    SoundButtonImageClick = None
+    ScoreButtonImageClick = None
+    TipButtonImageClick = None
+    x = None
+    y = None
+    PlayButton_Click = False
+    SoundButton_Click = False
+    ScoreButton_Click = False
+    TipButton_Click = False
+    PlayButton_On = False
+    SoundButton_On = False
+    ScoreButton_On = False
+    TipButton_On = False
+    Play = False
+    Score = False
+    Tip = False
+    Count = 0
 
     TitleImage = load_image('title.png')
     PlayButtonImageOn = load_image('icon_play_on.png')
@@ -64,16 +113,16 @@ def exit():
     global ScoreButtonImageClick
     global TipButtonImageClick
 
-    del(TitleImage)
-    del(PlayButtonImageOn)
-    del(SoundButtonImageOn)
-    del(ScoreButtonImageOn)
-    del(TipButtonImageOn)
+    #del(TitleImage)
+    #del(PlayButtonImageOn)
+    #del(SoundButtonImageOn)
+    #del(ScoreButtonImageOn)
+    #del(TipButtonImageOn)
 
-    del(PlayButtonImageClick)
-    del(SoundButtonImageClick)
-    del(ScoreButtonImageClick)
-    del(TipButtonImageClick)
+    #del(PlayButtonImageClick)
+    #del(SoundButtonImageClick)
+    #del(ScoreButtonImageClick)
+    #del(TipButtonImageClick)
 
 def handle_events():
     global x, y

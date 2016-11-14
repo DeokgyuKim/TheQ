@@ -58,6 +58,48 @@ def enter():
     global ScoreButtonImageClick
     global TipButtonImageClick
 
+    global x
+    global y
+    global EasyButton_Click
+    global NormalButton_Click
+    global HardButton_Click
+    global SoundButton_Click
+    global ScoreButton_Click
+    global TipButton_Click
+    global EasyButton_On
+    global NormalButton_On
+    global HardButton_On
+    global SoundButton_On
+    global ScoreButton_On
+    global TipButton_On
+    global Easy
+    global Normal
+    global Hard
+    global Score
+    global Tip
+    global Count
+
+    x = None
+    y = None
+    EasyButton_Click = False
+    NormalButton_Click = False
+    HardButton_Click = False
+    SoundButton_Click = False
+    ScoreButton_Click = False
+    TipButton_Click = False
+    EasyButton_On = False
+    NormalButton_On = False
+    HardButton_On = False
+    SoundButton_On = False
+    ScoreButton_On = False
+    TipButton_On = False
+    Easy = False
+    Normal = False
+    Hard = False
+    Score = False
+    Tip = False
+    Count = 0
+
     TitleImage = load_image('stage_title.png')
     EasyButtonImageOn = load_image('icon_easy_on.png')
     NormalButtonImageOn = load_image('icon_normal_on.png')
@@ -128,9 +170,7 @@ def handle_events():
             game_framework.change_state(Title_State)
         if event.type == SDL_MOUSEMOTION:
             x, y = event.x, 599 - event.y
-            if(x >= 134 and x <= 314 and y >= 300 and y <= 350 or ((x - 134.0) * (x - 134.0)) + ((y - 325.0) * (y - 325.0)) <= 25 * 25 or ((x - 314.0) * (x - 314.0)) + ((y - 325.0) * (y - 325.0)) <= 25 * 25):
-                EasyButton_On = True
-            elif (x >= 134 and x <= 314 and y >= 225 and y <= 275 or ((x - 134.0) * (x - 134.0)) + ((y - 250.0) * (y - 250.0)) <= 25 * 25 or ((x - 314.0) * (x - 314.0)) + ((y - 250.0) * (y - 250.0)) <= 25 * 25):
+            if (x >= 134 and x <= 314 and y >= 225 and y <= 275 or ((x - 134.0) * (x - 134.0)) + ((y - 250.0) * (y - 250.0)) <= 25 * 25 or ((x - 314.0) * (x - 314.0)) + ((y - 250.0) * (y - 250.0)) <= 25 * 25):
                 NormalButton_On = True
             elif (x >= 134 and x <= 314 and y >= 150 and y <= 200 or ((x - 134.0) * (x - 134.0)) + ((y - 175.0) * (y - 175.0)) <= 25 * 25 or ((x - 314.0) * (x - 314.0)) + ((y - 175.0) * (y - 175.0)) <= 25 * 25):
                 HardButton_On = True
@@ -150,15 +190,7 @@ def handle_events():
         if Easy != True and Normal != True and Hard != True and Score != True and Tip != True:
             if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
                 x, y = event.x, 599 - event.y
-                if (x >= 134 and x <= 314 and y >= 300 and y <= 350 or ((x - 134.0) * (x - 134.0)) + (
-                    (y - 325.0) * (y - 325.0)) <= 25 * 25 or ((x - 314.0) * (x - 314.0)) + (
-                    (y - 325.0) * (y - 325.0)) <= 25 * 25):
-                    if EasyButton_Click == True:
-                        EasyButton_Click = False
-                    else:
-                        EasyButton_Click = True
-                        Easy = True
-                elif (x >= 134 and x <= 314 and y >= 225 and y <= 275 or ((x - 134.0) * (x - 134.0)) + (
+                if (x >= 134 and x <= 314 and y >= 225 and y <= 275 or ((x - 134.0) * (x - 134.0)) + (
                     (y - 250.0) * (y - 250.0)) <= 25 * 25 or ((x - 314.0) * (x - 314.0)) + (
                     (y - 250.0) * (y - 250.0)) <= 25 * 25):
                     if NormalButton_Click == True:
@@ -194,7 +226,7 @@ def handle_events():
         else:
             Count += 1
             if(Count == 10):
-                if(Easy == True):
+                if(Normal == True):
                     game_framework.change_state(Main_Game_State)
                     pass
                 #elif(Score == True):
