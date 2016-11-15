@@ -5,6 +5,8 @@ from pico2d import *
 
 name = "MainGameState"
 TitleImage = None
+GageRedImage = None
+GageBlueImage = None
 x = None
 y = None
 Pause = False
@@ -20,7 +22,8 @@ BBC = 0
 RCC = 0
 BCC = 0
 Count = 0
-Max_Object = 7
+CountCircle = 0
+Max_Object = 20
 font = None
 
 
@@ -72,9 +75,10 @@ class Cars:
             self.CX, self.CY = 56, 100
         else:
             self.CX, self.CY = 389, 100
-        self.Radian = 32
+        self.Radian = 22
         self.Die = False
         self.Score = 0
+        self.Gage = 150
         self.state = self.STAND
         if kind == 3:
             self.kind = self.RED
@@ -107,7 +111,7 @@ class Boxs(Object):
 
     def update(self):
         self.CY -= 1
-        if self.CY < -10:
+        if self.CY <= -10:
             self.CX = 0
             self.CY = 0
 
@@ -138,6 +142,8 @@ class Circles(Object):
         self.image.draw(self.CX, self.CY)
 
 def enter():
+    global GageRedImage
+    global GageBlueImage
     global TitleImage
     global Pause, Count
     global RedCar
@@ -152,12 +158,17 @@ def enter():
     global BCC
     global Max_Object
     global font
+    global CountCircle
 
     font = load_font('koverwatch.ttf', 40)
     RBC = 0
     BBC = 0
     RCC = 0
     BCC = 0
+    CountCircle = 0
+
+    GageRedImage = load_image('icon_gage_red.png')
+    GageBlueImage = load_image('icon_gage_blue.png')
 
     TitleImage = load_image('main_game_title.png')
     Pause = False
@@ -182,15 +193,15 @@ def exit():
     global font
 
 
-    del(TitleImage)
-    del(RedCar)
-    del(BlueCar)
+    #del(TitleImage)
+    #del(RedCar)
+    #del(BlueCar)
 
-    del(RedCircle)
-    del(BlueCircle)
-    del(RedBox)
-    del(BlueBox)
-    del(font)
+    #del(RedCircle)
+    #del(BlueCircle)
+    #del(RedBox)
+    #del(BlueBox)
+    #del(font)
 
 def handle_events():
     global x, y, Pause
@@ -240,6 +251,8 @@ def draw():
     global BlueCircle
     global RedBox
     global BlueBox
+    global GageRedImage
+    global GageBlueImage
 
     clear_canvas()
     TitleImage.draw(222, 350)
@@ -255,9 +268,15 @@ def draw():
     for bluecircle in BlueCircle:
         if bluecircle.CX != 0 and bluecircle.CY != 0:
             bluecircle.draw()
-    RedCar.draw()
-    BlueCar.draw()
-    font.draw(380, 670, '%5d' % (BlueCar.Score + RedCar.Score), (255, 255, 255))
+    if RedCar.Die == False:
+        RedCar.draw()
+    if BlueCar.Die == False:
+        BlueCar.draw()
+
+    GageRedImage.clip_draw(0, 0, RedCar.Gage, 37, RedCar.Gage / 2, 681)
+    GageBlueImage.clip_draw(150 - BlueCar.Gage, 0, BlueCar.Gage, 37, 450 - (BlueCar.Gage / 2), 681)
+
+    font.draw(225, 670, '%5d' % (BlueCar.Score + RedCar.Score), (255, 255, 255))
     update_canvas()
 
 def update():
@@ -275,10 +294,12 @@ def update():
     global RCC
     global BCC
     global Count
+    global CountCircle
 
     Count += 1
+    CountCircle += 1
 
-    if Count == 400:
+    if Count == 200:
         Count = 0
         if RBC >= Max_Object:
             RBC = 0
@@ -288,119 +309,34 @@ def update():
             RCC = 0
         if BCC >= Max_Object:
             BCC = 0
-        Rand = random.randint(0, 15)
-        if Rand == 0:
-            RedBox[RBC].CX = 56
-            RedBox[RBC].CY = 750
-            BlueBox[BBC].CX = 278
-            BlueBox[BBC].CY = 750
-            RBC += 1 % Max_Object
-            BBC += 1 % Max_Object
-        elif Rand == 1:
-            RedBox[RBC].CX = 56
-            RedBox[RBC].CY = 750
-            BlueBox[BBC].CX = 389
-            BlueBox[BBC].CY = 750
-            RBC += 1 % Max_Object
-            BBC += 1 % Max_Object
-        elif Rand == 2:
-            RedBox[RBC].CX = 56
-            RedBox[RBC].CY = 750
-            BlueCircle[BCC].CX = 278
-            BlueCircle[BCC].CY = 750
-            RBC += 1 % Max_Object
-            BCC += 1 % Max_Object
-        elif Rand == 3:
-            RedBox[RBC].CX = 56
-            RedBox[RBC].CY = 750
-            BlueCircle[BCC].CX = 389
-            BlueCircle[BCC].CY = 750
-            RBC += 1 % Max_Object
-            BCC += 1 % Max_Object
-        elif Rand == 4:
-            RedBox[RBC].CX = 167
-            RedBox[RBC].CY = 750
-            BlueBox[BBC].CX = 278
-            BlueBox[BBC].CY = 750
-            RBC += 1 % Max_Object
-            BBC += 1 % Max_Object
-        elif Rand == 5:
-            RedBox[RBC].CX = 167
-            RedBox[RBC].CY = 750
-            BlueBox[BBC].CX = 389
-            BlueBox[BBC].CY = 750
-            RBC += 1 % Max_Object
-            BBC += 1 % Max_Object
-        elif Rand == 6:
-            RedBox[RBC].CX = 167
-            RedBox[RBC].CY = 750
-            BlueCircle[BCC].CX = 278
-            BlueCircle[BCC].CY = 750
-            RBC += 1 % Max_Object
-            BCC += 1 % Max_Object
-        elif Rand == 7:
-            RedBox[RBC].CX = 167
-            RedBox[RBC].CY = 750
-            BlueCircle[BCC].CX = 389
-            BlueCircle[BCC].CY = 750
-            RBC += 1 % Max_Object
-            BCC += 1 % Max_Object
-        elif Rand == 8:
-            RedCircle[RCC].CX = 56
+        Rand1 = random.randint(0, 2)
+        Rand1_Pos = random.randint(56, 167)
+        Rand2_Pos = random.randint(278, 389)
+        Rand3_Pos = random.randint(56, 167)
+        while (not(Rand1_Pos + 30 <= Rand3_Pos or Rand1_Pos - 30 >= Rand3_Pos)):
+            Rand3_Pos = random.randint(56, 167)
+        Rand4_Pos = random.randint(278, 389)
+        while (not(Rand2_Pos + 30 <= Rand4_Pos or Rand2_Pos - 30 >= Rand4_Pos)):
+            Rand4_Pos = random.randint(278, 389)
+
+
+        RedBox[RBC].CX = Rand1_Pos
+        RedBox[RBC].CY = 750
+        RBC += 1
+        if CountCircle == 600:
+            RedCircle[RCC].CX = Rand3_Pos
             RedCircle[RCC].CY = 750
-            BlueBox[BBC].CX = 278
-            BlueBox[BBC].CY = 750
-            RCC += 1 % Max_Object
-            BBC += 1 % Max_Object
-        elif Rand == 9:
-            RedCircle[RCC].CX = 56
-            RedCircle[RCC].CY = 750
-            BlueBox[BBC].CX = 389
-            BlueBox[BBC].CY = 750
-            RCC += 1 % Max_Object
-            BBC += 1 % Max_Object
-        elif Rand == 10:
-            RedCircle[RCC].CX = 56
-            RedCircle[RCC].CY = 750
-            BlueCircle[BCC].CX = 278
+            RCC += 1
+
+        BlueBox[BBC].CX = Rand2_Pos
+        BlueBox[BBC].CY = 750
+        BBC += 1
+        if CountCircle == 600:
+            CountCircle = 0
+            BlueCircle[BCC].CX = Rand4_Pos
             BlueCircle[BCC].CY = 750
-            RCC += 1 % Max_Object
-            BCC += 1 % Max_Object
-        elif Rand == 11:
-            RedCircle[RCC].CX = 56
-            RedCircle[RCC].CY = 750
-            BlueCircle[BCC].CX = 389
-            BlueCircle[BCC].CY = 750
-            RCC += 1 % Max_Object
-            BCC += 1 % Max_Object
-        elif Rand == 12:
-            RedCircle[RCC].CX = 167
-            RedCircle[RCC].CY = 750
-            BlueBox[BBC].CX = 278
-            BlueBox[BBC].CY = 750
-            RCC += 1 % Max_Object
-            BBC += 1 % Max_Object
-        elif Rand == 13:
-            RedCircle[RCC].CX = 167
-            RedCircle[RCC].CY = 750
-            BlueBox[BBC].CX = 389
-            BlueBox[BBC].CY = 750
-            RCC += 1 % Max_Object
-            BBC += 1 % Max_Object
-        elif Rand == 14:
-            RedCircle[RCC].CX = 167
-            RedCircle[RCC].CY = 750
-            BlueCircle[BCC].CX = 278
-            BlueCircle[BCC].CY = 750
-            RCC += 1 % Max_Object
-            BCC += 1 % Max_Object
-        elif Rand == 15:
-            RedCircle[RCC].CX = 167
-            RedCircle[RCC].CY = 750
-            BlueCircle[BCC].CX = 389
-            BlueCircle[BCC].CY = 750
-            RCC += 1 % Max_Object
-            BCC += 1 % Max_Object
+            BCC += 1
+
 
 
     RedCar.update()
@@ -419,42 +355,43 @@ def update():
         if bluecircle.CX != 0 and bluecircle.CY != 0:
             bluecircle.update()
 
-    for redbox in RedBox:
-        if((RedCar.CX - redbox.CX) * (RedCar.CX - redbox.CX) + (RedCar.CY - redbox.CY) * (RedCar.CY - redbox.CY) <= (
-            RedCar.Radian + redbox.Radian) * (RedCar.Radian + redbox.Radian)):
-            redbox.CX = 0
-            redbox.CY = 0
-            RedCar.Die = True
-    for redcircle in RedCircle:
-        if ((RedCar.CX - redcircle.CX) * (RedCar.CX - redcircle.CX) + (RedCar.CY - redcircle.CY) * (RedCar.CY - redcircle.CY) <= (
-            RedCar.Radian + redcircle.Radian) * (RedCar.Radian + redcircle.Radian)):
-            redcircle.CX = 0
-            redcircle.CY = 0
-            RedCar.Score += 1
+    if RedCar.Die == False:
+        for redbox in RedBox:
+            if((RedCar.CX - redbox.CX) * (RedCar.CX - redbox.CX) + (RedCar.CY - redbox.CY) * (RedCar.CY - redbox.CY) <= (
+                RedCar.Radian + redbox.Radian) * (RedCar.Radian + redbox.Radian)):
+                if(redbox.CX != 0 and redbox.CY != 0):
+                    redbox.CX = 0
+                    redbox.CY = 0
+                    RedCar.Gage -= 20
+        for redcircle in RedCircle:
+            if ((RedCar.CX - redcircle.CX) * (RedCar.CX - redcircle.CX) + (RedCar.CY - redcircle.CY) * (RedCar.CY - redcircle.CY) <= (
+                RedCar.Radian + redcircle.Radian) * (RedCar.Radian + redcircle.Radian)):
+                if (redcircle.CX != 0 and redcircle.CY != 0):
+                    redcircle.CX = 0
+                    redcircle.CY = 0
+                    RedCar.Gage += 10
 
-    for bluebox in BlueBox:
-        if((BlueCar.CX - bluebox.CX) * (BlueCar.CX - bluebox.CX) + (BlueCar.CY - bluebox.CY) * (BlueCar.CY - bluebox.CY) <= (
-            BlueCar.Radian + bluebox.Radian) * (BlueCar.Radian + bluebox.Radian)):
-            bluebox.CX = 0
-            bluebox.CY = 0
-            BlueCar.Die = True
-    for bluecircle in BlueCircle:
-        if ((BlueCar.CX - bluecircle.CX) * (BlueCar.CX - bluecircle.CX) + (BlueCar.CY - bluecircle.CY) * (BlueCar.CY - bluecircle.CY) <= (
-            BlueCar.Radian + bluecircle.Radian) * (BlueCar.Radian + bluecircle.Radian)):
-            bluecircle.CX = 0
-            bluecircle.CY = 0
-            BlueCar.Score += 1
+    if BlueCar.Die == False:
+        for bluecircle in BlueCircle:
+            if ((BlueCar.CX - bluecircle.CX) * (BlueCar.CX - bluecircle.CX) + (BlueCar.CY - bluecircle.CY) * (BlueCar.CY - bluecircle.CY) <= (
+                    BlueCar.Radian + bluecircle.Radian) * (BlueCar.Radian + bluecircle.Radian)):
+                if (bluecircle.CX != 0 and bluecircle.CY != 0):
+                    bluecircle.CX = 0
+                    bluecircle.CY = 0
+                    BlueCar.Gage += 20
+        for bluebox in BlueBox:
+            if((BlueCar.CX - bluebox.CX) * (BlueCar.CX - bluebox.CX) + (BlueCar.CY - bluebox.CY) * (BlueCar.CY - bluebox.CY) <= (
+                BlueCar.Radian + bluebox.Radian) * (BlueCar.Radian + bluebox.Radian)):
+                if (bluebox.CX != 0 and bluebox.CY != 0):
+                    bluebox.CX = 0
+                    bluebox.CY = 0
+                    BlueCar.Gage -= 20
+    if BlueCar.Gage <= 0:
+        BlueCar.Die = True
+    elif RedCar.Gage <= 0:
+        RedCar.Die = True
 
-    for redcircle in RedCircle:
-        if redcircle.CX != 0:
-            if redcircle.CY <= 0:
-                RedCar.Die = True
-    for bluecircle in BlueCircle:
-        if bluecircle.CX != 0:
-            if bluecircle.CY <= 0:
-                BlueCar.Die = True
-
-    if BlueCar.Die == True or RedCar.Die == True:
+    if BlueCar.Die == True and RedCar.Die == True:
         game_framework.push_state(Title_State)
 def pause():
     pass

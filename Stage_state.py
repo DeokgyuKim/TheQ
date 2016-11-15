@@ -1,6 +1,7 @@
 import game_framework
 import Title_State
 import Main_Game_State
+import Main_Game_State_Hard
 from pico2d import *
 
 name = "StageState"
@@ -229,6 +230,8 @@ def handle_events():
                 if(Normal == True):
                     game_framework.change_state(Main_Game_State)
                     pass
+                elif(Hard == True):
+                    game_framework.change_state(Main_Game_State_Hard)
                 #elif(Score == True):
                     #Score_State
                     #pass
