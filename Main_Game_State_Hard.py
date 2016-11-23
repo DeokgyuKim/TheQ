@@ -370,6 +370,8 @@ def update():
                     redcircle.CX = 0
                     redcircle.CY = 0
                     RedCar.Gage += 10
+                    if(RedCar.Gage > 150):
+                        RedCar.Gage = 150
 
     if BlueCar.Die == False:
         for bluecircle in BlueCircle:
@@ -378,7 +380,9 @@ def update():
                 if (bluecircle.CX != 0 and bluecircle.CY != 0):
                     bluecircle.CX = 0
                     bluecircle.CY = 0
-                    BlueCar.Gage += 20
+                    BlueCar.Gage += 10
+                    if (BlueCar.Gage > 150):
+                        BlueCar.Gage = 150
         for bluebox in BlueBox:
             if((BlueCar.CX - bluebox.CX) * (BlueCar.CX - bluebox.CX) + (BlueCar.CY - bluebox.CY) * (BlueCar.CY - bluebox.CY) <= (
                 BlueCar.Radian + bluebox.Radian) * (BlueCar.Radian + bluebox.Radian)):
