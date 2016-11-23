@@ -203,17 +203,17 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 Pause = True
             if event.key == SDLK_RIGHT:
-                #if BlueCar.state == BlueCar.STAND:
-                BlueCar.state = BlueCar.RIGHT
+                if BlueCar.state == BlueCar.STAND:
+                    BlueCar.state = BlueCar.RIGHT
             elif event.key == SDLK_LEFT:
-                #if BlueCar.state == BlueCar.STAND:
-                BlueCar.state = BlueCar.LEFT
+                if BlueCar.state == BlueCar.STAND:
+                    BlueCar.state = BlueCar.LEFT
             if event.key == SDLK_LALT:
-                #if RedCar.state == RedCar.STAND:
-                RedCar.state = RedCar.RIGHT
+                if RedCar.state == RedCar.STAND:
+                    RedCar.state = RedCar.RIGHT
             elif event.key == SDLK_LCTRL:
-                #if RedCar.state == RedCar.STAND:
-                RedCar.state = RedCar.LEFT
+                if RedCar.state == RedCar.STAND:
+                    RedCar.state = RedCar.LEFT
 
 
         if event.type == SDL_MOUSEMOTION:
@@ -260,11 +260,7 @@ def draw():
     font.draw(380, 670, '%5d' % (BlueCar.Score + RedCar.Score), (255, 255, 255))
     update_canvas()
 
-def update():
-
-    global RedCar
-    global BlueCar
-
+def MakeObject():
     global RedCircle
     global BlueCircle
     global RedBox
@@ -275,7 +271,6 @@ def update():
     global RCC
     global BCC
     global Count
-
     Count += 1
 
     if Count == 400:
@@ -402,23 +397,14 @@ def update():
             RCC += 1 % Max_Object
             BCC += 1 % Max_Object
 
+def Collision():
+    global RedCar
+    global BlueCar
 
-    RedCar.update()
-    BlueCar.update()
-
-    for redbox in RedBox:
-        if redbox.CX != 0 and redbox.CY != 0:
-            redbox.update()
-    for bluebox in BlueBox:
-        if bluebox.CX != 0 and bluebox.CY != 0:
-            bluebox.update()
-    for redcircle in RedCircle:
-        if redcircle.CX != 0 and redcircle.CY != 0:
-            redcircle.update()
-    for bluecircle in BlueCircle:
-        if bluecircle.CX != 0 and bluecircle.CY != 0:
-            bluecircle.update()
-
+    global RedCircle
+    global BlueCircle
+    global RedBox
+    global BlueBox
     for redbox in RedBox:
         if((RedCar.CX - redbox.CX) * (RedCar.CX - redbox.CX) + (RedCar.CY - redbox.CY) * (RedCar.CY - redbox.CY) <= (
             RedCar.Radian + redbox.Radian) * (RedCar.Radian + redbox.Radian)):
@@ -453,6 +439,36 @@ def update():
         if bluecircle.CX != 0:
             if bluecircle.CY <= 0:
                 BlueCar.Die = True
+
+def update():
+
+    global RedCar
+    global BlueCar
+
+    global RedCircle
+    global BlueCircle
+    global RedBox
+    global BlueBox
+
+    MakeObject()
+
+    RedCar.update()
+    BlueCar.update()
+
+    for redbox in RedBox:
+        if redbox.CX != 0 and redbox.CY != 0:
+            redbox.update()
+    for bluebox in BlueBox:
+        if bluebox.CX != 0 and bluebox.CY != 0:
+            bluebox.update()
+    for redcircle in RedCircle:
+        if redcircle.CX != 0 and redcircle.CY != 0:
+            redcircle.update()
+    for bluecircle in BlueCircle:
+        if bluecircle.CX != 0 and bluecircle.CY != 0:
+            bluecircle.update()
+
+    Collision()
 
     if BlueCar.Die == True or RedCar.Die == True:
         game_framework.push_state(Title_State)

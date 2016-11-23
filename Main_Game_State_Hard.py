@@ -22,7 +22,6 @@ BBC = 0
 RCC = 0
 BCC = 0
 Count = 0
-CountCircle = 0
 Max_Object = 20
 font = None
 
@@ -279,11 +278,7 @@ def draw():
     font.draw(225, 670, '%5d' % (BlueCar.Score + RedCar.Score), (255, 255, 255))
     update_canvas()
 
-def update():
-
-    global RedCar
-    global BlueCar
-
+def MakeObject():
     global RedCircle
     global BlueCircle
     global RedBox
@@ -294,67 +289,83 @@ def update():
     global RCC
     global BCC
     global Count
-    global CountCircle
-
     Count += 1
-    CountCircle += 1
 
     if Count == 200:
         Count = 0
-        if RBC >= Max_Object:
-            RBC = 0
-        if BBC >= Max_Object:
-            BBC = 0
-        if RCC >= Max_Object:
-            RCC = 0
-        if BCC >= Max_Object:
-            BCC = 0
-        Rand1 = random.randint(0, 2)
-        Rand1_Pos = random.randint(56, 167)
-        Rand2_Pos = random.randint(278, 389)
-        Rand3_Pos = random.randint(56, 167)
-        while (not(Rand1_Pos + 30 <= Rand3_Pos or Rand1_Pos - 30 >= Rand3_Pos)):
-            Rand3_Pos = random.randint(56, 167)
-        Rand4_Pos = random.randint(278, 389)
-        while (not(Rand2_Pos + 30 <= Rand4_Pos or Rand2_Pos - 30 >= Rand4_Pos)):
-            Rand4_Pos = random.randint(278, 389)
 
+        Rand = random.randint(0, 3)
+        Rand_Red_or_Blue_Circle = random.randint(0, 4)
+        if Rand == 0:
+            RedBox[RBC].CX = 56
+            RedBox[RBC].CY = 750
+            BlueBox[BBC].CX = 278
+            BlueBox[BBC].CY = 750
+            RBC = (RBC + 1) % Max_Object
+            BBC = (BBC + 1) % Max_Object
+            if Rand_Red_or_Blue_Circle == 0:
+                RedCircle[RCC].CX = 167
+                RedCircle[RCC].CY = 750
+                RCC = (RCC + 1) % Max_Object
+            elif Rand_Red_or_Blue_Circle == 1:
+                BlueCircle[BCC].CX = 389
+                BlueCircle[BCC].CY = 750
+                BCC = (BCC + 1) % Max_Object
+        elif Rand == 1:
+            RedBox[RBC].CX = 56
+            RedBox[RBC].CY = 750
+            BlueBox[BBC].CX = 389
+            BlueBox[BBC].CY = 750
+            RBC = (RBC + 1) % Max_Object
+            BBC = (BBC + 1) % Max_Object
+            if Rand_Red_or_Blue_Circle == 0:
+                RedCircle[RCC].CX = 167
+                RedCircle[RCC].CY = 750
+                RCC = (RCC + 1) % Max_Object
+            elif Rand_Red_or_Blue_Circle == 1:
+                BlueCircle[BCC].CX = 278
+                BlueCircle[BCC].CY = 750
+                BCC = (BCC + 1) % Max_Object
+        elif Rand == 2:
+            RedBox[RBC].CX = 167
+            RedBox[RBC].CY = 750
+            BlueBox[BBC].CX = 278
+            BlueBox[BBC].CY = 750
+            RBC = (RBC + 1) % Max_Object
+            BBC = (BBC + 1) % Max_Object
+            if Rand_Red_or_Blue_Circle == 0:
+                RedCircle[RCC].CX = 56
+                RedCircle[RCC].CY = 750
+                RCC = (RCC + 1) % Max_Object
+            elif Rand_Red_or_Blue_Circle == 1:
+                BlueCircle[BCC].CX = 389
+                BlueCircle[BCC].CY = 750
+                BCC = (BCC + 1) % Max_Object
 
-        RedBox[RBC].CX = Rand1_Pos
-        RedBox[RBC].CY = 750
-        RBC += 1
-        if CountCircle == 600:
-            RedCircle[RCC].CX = Rand3_Pos
-            RedCircle[RCC].CY = 750
-            RCC += 1
+        elif Rand == 3:
+            RedBox[RBC].CX = 167
+            RedBox[RBC].CY = 750
+            BlueBox[BBC].CX = 389
+            BlueBox[BBC].CY = 750
+            RBC = (RBC + 1) % Max_Object
+            BBC = (BBC + 1) % Max_Object
+            if Rand_Red_or_Blue_Circle == 0:
+                RedCircle[RCC].CX = 56
+                RedCircle[RCC].CY = 750
+                RCC = (RCC + 1) % Max_Object
+            elif Rand_Red_or_Blue_Circle == 1:
+                BlueCircle[BCC].CX = 278
+                BlueCircle[BCC].CY = 750
+                BCC = (BCC + 1) % Max_Object
 
-        BlueBox[BBC].CX = Rand2_Pos
-        BlueBox[BBC].CY = 750
-        BBC += 1
-        if CountCircle == 600:
-            CountCircle = 0
-            BlueCircle[BCC].CX = Rand4_Pos
-            BlueCircle[BCC].CY = 750
-            BCC += 1
+def Collision():
+    global RedCar
+    global BlueCar
 
-
-
-    RedCar.update()
-    BlueCar.update()
-
-    for redbox in RedBox:
-        if redbox.CX != 0 and redbox.CY != 0:
-            redbox.update()
-    for bluebox in BlueBox:
-        if bluebox.CX != 0 and bluebox.CY != 0:
-            bluebox.update()
-    for redcircle in RedCircle:
-        if redcircle.CX != 0 and redcircle.CY != 0:
-            redcircle.update()
-    for bluecircle in BlueCircle:
-        if bluecircle.CX != 0 and bluecircle.CY != 0:
-            bluecircle.update()
-
+    global RedCircle
+    global BlueCircle
+    global RedBox
+    global BlueBox
     if RedCar.Die == False:
         for redbox in RedBox:
             if((RedCar.CX - redbox.CX) * (RedCar.CX - redbox.CX) + (RedCar.CY - redbox.CY) * (RedCar.CY - redbox.CY) <= (
@@ -392,8 +403,36 @@ def update():
                     BlueCar.Gage -= 20
     if BlueCar.Gage <= 0:
         BlueCar.Die = True
-    elif RedCar.Gage <= 0:
+    if RedCar.Gage <= 0:
         RedCar.Die = True
+
+def update():
+
+    global RedCar
+    global BlueCar
+
+    global RedCircle
+    global BlueCircle
+    global RedBox
+    global BlueBox
+
+    MakeObject()
+
+    RedCar.update()
+    BlueCar.update()
+
+    for redbox in RedBox:
+        if redbox.CX != 0 and redbox.CY != 0:
+            redbox.update()
+    for bluebox in BlueBox:
+        if bluebox.CX != 0 and bluebox.CY != 0:
+            bluebox.update()
+    for redcircle in RedCircle:
+        if redcircle.CX != 0 and redcircle.CY != 0:
+            redcircle.update()
+    for bluecircle in BlueCircle:
+        if bluecircle.CX != 0 and bluecircle.CY != 0:
+            bluecircle.update()
 
     if BlueCar.Die == True and RedCar.Die == True:
         game_framework.push_state(Title_State)
