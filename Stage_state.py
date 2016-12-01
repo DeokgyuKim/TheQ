@@ -3,6 +3,7 @@ import Title_State
 import Main_Game_State
 import Main_Game_State_Hard
 from pico2d import *
+import ranking_state
 
 name = "StageState"
 TitleImage = None
@@ -101,6 +102,13 @@ def enter():
     Tip = False
     Count = 0
 
+    f = open('Sound.txt', 'r')
+    Sound_data = json.load(f)
+    f.close()
+
+    if Sound_data[0]['SOUND'] == 1:
+        SoundButton_Click = True
+
     TitleImage = load_image('stage_title.png')
     EasyButtonImageOn = load_image('icon_easy_on.png')
     NormalButtonImageOn = load_image('icon_normal_on.png')
@@ -132,6 +140,14 @@ def exit():
     global ScoreButtonImageClick
     global TipButtonImageClick
 
+    if SoundButton_Click == True:
+        Sound_data = [{"SOUND": 1}]
+    else:
+        Sound_data = [{"SOUND": 0}]
+    f = open('Sound.txt', 'w')
+    json.dump(Sound_data, f)
+    f.close()
+
     del(TitleImage)
     del(EasyButtonImageOn)
     del(NormalButtonImageOn)
@@ -147,7 +163,7 @@ def exit():
     del(ScoreButtonImageClick)
     del(TipButtonImageClick)
 
-def handle_events():
+def handle_events(frame_time):
     global x, y
     global Easy, Normal, Hard, Score, Tip, Count
     global EasyButton_Click
@@ -232,16 +248,14 @@ def handle_events():
                     pass
                 elif(Hard == True):
                     game_framework.change_state(Main_Game_State_Hard)
-                #elif(Score == True):
-                    #Score_State
+                elif(Score == True):
+                    game_framework.change_state(ranking_state)
                     #pass
                 #elif(Tip == True):
                     #Tip_State
                     #pass
             #game_framework.quit()
-
-
-def draw():
+def draw(frame_time):
     clear_canvas()
     TitleImage.draw(222, 350)
     if EasyButton_Click == True:
@@ -269,14 +283,9 @@ def draw():
     elif TipButton_On == True:
         TipButtonImageOn.draw(316, 200)
     update_canvas()
-
-def update():
+def update(frame_time):
     pass
-
-
 def pause():
     pass
-
-
 def resume():
     pass

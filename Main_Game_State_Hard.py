@@ -1,6 +1,10 @@
 import random
 import game_framework
 import Title_State
+from Car import Cars
+from Box import Boxs
+from Circle import Circles
+from Sound import Sounds
 from pico2d import *
 
 name = "MainGameState"
@@ -21,124 +25,10 @@ RBC = 0
 BBC = 0
 RCC = 0
 BCC = 0
-Count = 0
 Max_Object = 20
 font = None
+BGM = None
 
-
-class Cars:
-    LEFT, RIGHT, STAND = 0, 1, 2
-    RED, BLUE = 3, 4
-
-    def handle_left(self):
-        if self.kind == self.RED:
-            if self.CX <= 56:
-                self.CX = 56
-                self.state = self.STAND
-            else:
-                self.CX -= 1
-        elif self.kind == self.BLUE:
-            if self.CX <= 278:
-                self.CX = 278
-                self.state = self.STAND
-            else:
-                self.CX -= 1
-    def handle_right(self):
-        if self.kind == self.RED:
-            if self.CX >= 167:
-                self.CX = 167
-                self.state = self.STAND
-            else:
-                self.CX += 1
-        elif self.kind == self.BLUE:
-            if self.CX >= 389:
-                self.CX = 389
-                self.state = self.STAND
-            else:
-                self.CX += 1
-    def handle_stand(self):
-        pass
-
-    handle_state = {
-        LEFT: handle_left,
-        RIGHT: handle_right,
-        STAND: handle_stand
-    }
-
-    def update(self):
-        self.handle_state[self.state](self)
-
-
-    def __init__(self, kind):
-        if kind == 3:
-            self.CX, self.CY = 56, 100
-        else:
-            self.CX, self.CY = 389, 100
-        self.Radian = 22
-        self.Die = False
-        self.Score = 0
-        self.Gage = 150
-        self.state = self.STAND
-        if kind == 3:
-            self.kind = self.RED
-        else:
-            self.kind = self.BLUE
-        if kind == 3:
-            self.image = load_image('icon_car_red.png')
-        else:
-            self.image = load_image('icon_car_blue.png')
-
-    def draw(self):
-        self.image.draw(self.CX, self.CY)
-class Object:
-    def __init__(self, kind):
-        self.Radian = 20
-        self.CX, self.CY = 0, 0
-class Boxs(Object):
-    RED, BLUE = 3, 4
-    def __init__(self, kind):
-        self.Radian = 20
-        self.CX, self.CY = 0, 0
-        if kind == 3:
-            self.kind = self.RED
-        else:
-            self.kind = self.BLUE
-        if kind == 3:
-            self.image = load_image('icon_box_red.png')
-        else:
-            self.image = load_image('icon_box_blue.png')
-
-    def update(self):
-        self.CY -= 1
-        if self.CY <= -10:
-            self.CX = 0
-            self.CY = 0
-
-    def draw(self):
-        self.image.draw(self.CX, self.CY)
-class Circles(Object):
-    RED, BLUE = 3, 4
-    def __init__(self, kind):
-        self.Radian = 20
-        self.CX, self.CY = 0, 0
-        if kind == 3:
-            self.kind = self.RED
-        else:
-            self.kind = self.BLUE
-        if kind == 3:
-            self.image = load_image('icon_circle_red.png')
-        else:
-            self.image = load_image('icon_circle_blue.png')
-
-    def update(self):
-        self.CY -= 1
-        if self.CY <= -10:
-            self.CX = 0
-            self.CY = 0
-            #game_framework.change_state(Score_State)
-
-    def draw(self):
-        self.image.draw(self.CX, self.CY)
 
 def enter():
     global GageRedImage
@@ -157,14 +47,13 @@ def enter():
     global BCC
     global Max_Object
     global font
-    global CountCircle
+    global BGM
 
     font = load_font('koverwatch.ttf', 40)
     RBC = 0
     BBC = 0
     RCC = 0
     BCC = 0
-    CountCircle = 0
 
     GageRedImage = load_image('icon_gage_red.png')
     GageBlueImage = load_image('icon_gage_blue.png')
@@ -180,6 +69,14 @@ def enter():
     RedBox = [Boxs(3) for i in range(Max_Object)]
     BlueBox = [Boxs(4) for i in range(Max_Object)]
 
+    f = open('Sound.txt', 'r')
+    Sound_data = json.load(f)
+    f.close()
+
+    if Sound_data[0]['SOUND'] == 1:
+        BGM = Sounds()
+
+    game_framework.reset_time()
 def exit():
     global TitleImage
     global RedCar
@@ -190,28 +87,36 @@ def exit():
     global RedBox
     global BlueBox
     global font
+    global BGM
 
+    f = open('save_hard.txt', 'r')
+    score_data = json.load(f)
+    f.close()
 
-    #del(TitleImage)
-    #del(RedCar)
-    #del(BlueCar)
+    score_data.append({"REDCAR_TIME": RedCar.Die_time, "BLUECAR_TIME": BlueCar.Die_time, "TOTAL_TIME": RedCar.Die_time + BlueCar.Die_time})
+    f = open('save_hard.txt', 'w')
+    json.dump(score_data, f)
+    f.close()
 
-    #del(RedCircle)
-    #del(BlueCircle)
-    #del(RedBox)
-    #del(BlueBox)
-    #del(font)
+    del(TitleImage)
+    del(RedCar)
+    del(BlueCar)
 
-def handle_events():
-    global x, y, Pause
-    global Count
+    del(RedCircle)
+    del(BlueCircle)
+    del(RedBox)
+    del(BlueBox)
+    del(font)
+    del(BGM)
+
+def handle_events(frame_time):
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
-                Pause = True
+                game_framework.change_state(Title_State)
             if event.key == SDLK_RIGHT:
                 #if BlueCar.state == BlueCar.STAND:
                 BlueCar.state = BlueCar.RIGHT
@@ -229,20 +134,9 @@ def handle_events():
         if event.type == SDL_MOUSEMOTION:
             x, y = event.x, 599 - event.y
             pass
-        if Pause != True:
-            if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
-                x, y = event.x, 599 - event.y
-                pass
-        else:
-            Count += 1
-            if(Count == 10):
-                if(Pause == True):
-                    #game_framework.push_state(Pause_state)
-                    pass
-            game_framework.change_state(Title_State)
 
 
-def draw():
+def draw(frame_time):
     global RedCar
     global BlueCar
 
@@ -257,42 +151,46 @@ def draw():
     TitleImage.draw(222, 350)
     for redbox in RedBox:
         if redbox.CX != 0 and redbox.CY != 0:
-            redbox.draw()
+            redbox.draw(frame_time)
     for bluebox in BlueBox:
         if bluebox.CX != 0 and bluebox.CY != 0:
-            bluebox.draw()
+            bluebox.draw(frame_time)
     for redcircle in RedCircle:
         if redcircle.CX != 0 and redcircle.CY != 0:
-            redcircle.draw()
+            redcircle.draw(frame_time)
     for bluecircle in BlueCircle:
         if bluecircle.CX != 0 and bluecircle.CY != 0:
-            bluecircle.draw()
+            bluecircle.draw(frame_time)
     if RedCar.Die == False:
-        RedCar.draw()
+        RedCar.draw(frame_time)
     if BlueCar.Die == False:
-        BlueCar.draw()
+        BlueCar.draw(frame_time)
 
     GageRedImage.clip_draw(0, 0, RedCar.Gage, 37, RedCar.Gage / 2, 681)
     GageBlueImage.clip_draw(150 - BlueCar.Gage, 0, BlueCar.Gage, 37, 450 - (BlueCar.Gage / 2), 681)
 
-    font.draw(225, 670, '%5d' % (BlueCar.Score + RedCar.Score), (255, 255, 255))
+    if BlueCar.Die == False:
+        font.draw(225, 670, '%4.2f' % BlueCar.life_frame, (255, 255, 255))
+    elif RedCar.Die == False:
+        font.draw(225, 670, '%4.2f' % RedCar.life_frame, (255, 255, 255))
     update_canvas()
 
-def MakeObject():
+def MakeObject(frame_time):
     global RedCircle
     global BlueCircle
     global RedBox
     global BlueBox
+    global RedCar
+    global BlueCar
 
     global RBC
     global BBC
     global RCC
     global BCC
-    global Count
-    Count += 1
 
-    if Count == 200:
-        Count = 0
+    if (BlueCar.Object_time >= (1 / BlueCar.level) and BlueCar.Die == False) or (RedCar.Object_time >= (1 / RedCar.level) and RedCar.Die == False):
+        BlueCar.Object_time = 0.0
+        RedCar.Object_time = 0.0
 
         Rand = random.randint(0, 3)
         Rand_Red_or_Blue_Circle = random.randint(0, 4)
@@ -358,7 +256,7 @@ def MakeObject():
                 BlueCircle[BCC].CY = 750
                 BCC = (BCC + 1) % Max_Object
 
-def Collision():
+def Collision(frame_time):
     global RedCar
     global BlueCar
 
@@ -406,7 +304,7 @@ def Collision():
     if RedCar.Gage <= 0:
         RedCar.Die = True
 
-def update():
+def update(frame_time):
 
     global RedCar
     global BlueCar
@@ -416,23 +314,39 @@ def update():
     global RedBox
     global BlueBox
 
-    MakeObject()
+    MakeObject(frame_time)
 
-    RedCar.update()
-    BlueCar.update()
+    RedCar.update(frame_time)
+    BlueCar.update(frame_time)
 
-    for redbox in RedBox:
-        if redbox.CX != 0 and redbox.CY != 0:
-            redbox.update()
-    for bluebox in BlueBox:
-        if bluebox.CX != 0 and bluebox.CY != 0:
-            bluebox.update()
-    for redcircle in RedCircle:
-        if redcircle.CX != 0 and redcircle.CY != 0:
-            redcircle.update()
-    for bluecircle in BlueCircle:
-        if bluecircle.CX != 0 and bluecircle.CY != 0:
-            bluecircle.update()
+
+    if RedCar.Die == False:
+        for redbox in RedBox:
+            if redbox.CX != 0 and redbox.CY != 0:
+                redbox.update(frame_time, RedCar.level)
+        for bluebox in BlueBox:
+            if bluebox.CX != 0 and bluebox.CY != 0:
+                bluebox.update(frame_time, RedCar.level)
+        for redcircle in RedCircle:
+            if redcircle.CX != 0 and redcircle.CY != 0:
+                redcircle.update(frame_time, RedCar.level)
+        for bluecircle in BlueCircle:
+            if bluecircle.CX != 0 and bluecircle.CY != 0:
+                bluecircle.update(frame_time, RedCar.level)
+    elif BlueCar.Die == False:
+        for redbox in RedBox:
+            if redbox.CX != 0 and redbox.CY != 0:
+                redbox.update(frame_time, BlueCar.level)
+        for bluebox in BlueBox:
+            if bluebox.CX != 0 and bluebox.CY != 0:
+                bluebox.update(frame_time, BlueCar.level)
+        for redcircle in RedCircle:
+            if redcircle.CX != 0 and redcircle.CY != 0:
+                redcircle.update(frame_time, BlueCar.level)
+        for bluecircle in BlueCircle:
+            if bluecircle.CX != 0 and bluecircle.CY != 0:
+                bluecircle.update(frame_time, BlueCar.level)
+    Collision(frame_time)
 
     if BlueCar.Die == True and RedCar.Die == True:
         game_framework.push_state(Title_State)

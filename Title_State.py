@@ -1,5 +1,6 @@
 import game_framework
 import Stage_state
+import ranking_state
 from pico2d import *
 
 name = "TitleState"
@@ -91,6 +92,13 @@ def enter():
     Tip = False
     Count = 0
 
+    f = open('Sound.txt', 'r')
+    Sound_data = json.load(f)
+    f.close()
+
+    if Sound_data[0]['SOUND'] == 1:
+        SoundButton_Click = True
+
     TitleImage = load_image('title.png')
     PlayButtonImageOn = load_image('icon_play_on.png')
     SoundButtonImageOn = load_image('icon_sound_on.png')
@@ -113,18 +121,26 @@ def exit():
     global ScoreButtonImageClick
     global TipButtonImageClick
 
-    #del(TitleImage)
-    #del(PlayButtonImageOn)
-    #del(SoundButtonImageOn)
-    #del(ScoreButtonImageOn)
-    #del(TipButtonImageOn)
+    if SoundButton_Click == True:
+        Sound_data = [{"SOUND": 1}]
+    else:
+        Sound_data = [{"SOUND": 0}]
+    f = open('Sound.txt', 'w')
+    json.dump(Sound_data, f)
+    f.close()
 
-    #del(PlayButtonImageClick)
-    #del(SoundButtonImageClick)
-    #del(ScoreButtonImageClick)
-    #del(TipButtonImageClick)
+    del(TitleImage)
+    del(PlayButtonImageOn)
+    del(SoundButtonImageOn)
+    del(ScoreButtonImageOn)
+    del(TipButtonImageOn)
 
-def handle_events():
+    del(PlayButtonImageClick)
+    del(SoundButtonImageClick)
+    del(ScoreButtonImageClick)
+    del(TipButtonImageClick)
+
+def handle_events(frame_time):
     global x, y
     global Play, Score, Tip, Count
     global PlayButton_Click
@@ -187,18 +203,16 @@ def handle_events():
             Count += 1
             if(Count == 10):
                 if(Play == True):
-                    game_framework.push_state(Stage_state)
+                    game_framework.change_state(Stage_state)
                     pass
                 elif(Score == True):
-                    #Score_State
+                    game_framework.change_state(ranking_state)
                     pass
                 elif(Tip == True):
                     #Tip_State
                     pass
             #game_framework.quit()
-
-
-def draw():
+def draw(frame_time):
     clear_canvas()
     TitleImage.draw(222, 350)
     if PlayButton_Click == True:
@@ -218,14 +232,9 @@ def draw():
     elif TipButton_On == True:
         TipButtonImageOn.draw(315, 200)
     update_canvas()
-
-def update():
+def update(frame_time):
     pass
-
-
 def pause():
     pass
-
-
 def resume():
     pass
