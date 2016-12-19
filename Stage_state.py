@@ -2,6 +2,7 @@ import game_framework
 import Title_State
 import Main_Game_State
 import Main_Game_State_Hard
+import Tip_state
 from pico2d import *
 import ranking_state
 
@@ -251,8 +252,8 @@ def handle_events(frame_time):
                 elif(Score == True):
                     game_framework.change_state(ranking_state)
                     #pass
-                #elif(Tip == True):
-                    #Tip_State
+                elif(Tip == True):
+                    game_framework.change_state(Tip_state)
                     #pass
             #game_framework.quit()
 def draw(frame_time):

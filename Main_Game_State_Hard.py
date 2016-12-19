@@ -11,6 +11,8 @@ name = "MainGameState"
 TitleImage = None
 GageRedImage = None
 GageBlueImage = None
+EmptyGageRedImage = None
+EmptyGageBlueImage = None
 x = None
 y = None
 Pause = False
@@ -28,6 +30,7 @@ BCC = 0
 Max_Object = 20
 font = None
 BGM = None
+playerCount = 0
 
 
 def enter():
@@ -48,15 +51,22 @@ def enter():
     global Max_Object
     global font
     global BGM
+    global playerCount
+    global EmptyGageRedImage
+    global EmptyGageBlueImage
 
-    font = load_font('koverwatch.ttf', 40)
+
+    font = load_font('NEXON Football Gothic L.otf', 35)
     RBC = 0
     BBC = 0
     RCC = 0
     BCC = 0
+    playerCount = 2
 
     GageRedImage = load_image('icon_gage_red.png')
     GageBlueImage = load_image('icon_gage_blue.png')
+    EmptyGageRedImage = load_image('icon_empty_gage_red.png')
+    EmptyGageBlueImage = load_image('icon_empty_gage_blue.png')
 
     TitleImage = load_image('main_game_title.png')
     Pause = False
@@ -146,6 +156,8 @@ def draw(frame_time):
     global BlueBox
     global GageRedImage
     global GageBlueImage
+    global EmptyGageRedImage
+    global EmptyGageBlueImage
 
     clear_canvas()
     TitleImage.draw(222, 350)
@@ -168,6 +180,9 @@ def draw(frame_time):
 
     GageRedImage.clip_draw(0, 0, RedCar.Gage, 37, RedCar.Gage / 2, 681)
     GageBlueImage.clip_draw(150 - BlueCar.Gage, 0, BlueCar.Gage, 37, 450 - (BlueCar.Gage / 2), 681)
+    EmptyGageRedImage.draw(75, 681)
+    EmptyGageBlueImage.draw(450 - 75, 681)
+
 
     if BlueCar.Die == False:
         font.draw(225, 670, '%4.2f' % BlueCar.life_frame, (255, 255, 255))
@@ -264,6 +279,7 @@ def Collision(frame_time):
     global BlueCircle
     global RedBox
     global BlueBox
+    global playerCount
     if RedCar.Die == False:
         for redbox in RedBox:
             if((RedCar.CX - redbox.CX) * (RedCar.CX - redbox.CX) + (RedCar.CY - redbox.CY) * (RedCar.CY - redbox.CY) <= (
@@ -299,10 +315,16 @@ def Collision(frame_time):
                     bluebox.CX = 0
                     bluebox.CY = 0
                     BlueCar.Gage -= 20
-    if BlueCar.Gage <= 0:
-        BlueCar.Die = True
-    if RedCar.Gage <= 0:
-        RedCar.Die = True
+    if BlueCar.Die == False:
+        if BlueCar.Gage <= 0:
+            BlueCar.Die_time = BlueCar.life_frame
+            BlueCar.Die = True
+            playerCount -= 1
+    if RedCar.Die == False:
+        if RedCar.Gage <= 0:
+            RedCar.Die_time = RedCar.life_frame
+            RedCar.Die = True
+            playerCount -= 1
 
 def update(frame_time):
 
@@ -316,8 +338,8 @@ def update(frame_time):
 
     MakeObject(frame_time)
 
-    RedCar.update(frame_time)
-    BlueCar.update(frame_time)
+    RedCar.update(frame_time, playerCount)
+    BlueCar.update(frame_time, playerCount)
 
 
     if RedCar.Die == False:
@@ -349,7 +371,7 @@ def update(frame_time):
     Collision(frame_time)
 
     if BlueCar.Die == True and RedCar.Die == True:
-        game_framework.push_state(Title_State)
+        game_framework.change_state(Title_State)
 def pause():
     pass
 

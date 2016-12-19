@@ -16,7 +16,7 @@ def enter():
     global TitleImage, font, score_data_normal, score_data_hard
 
     TitleImage = load_image('ranking_title.png')
-    font = load_font('koverwatch.ttf', 30)
+    font = load_font('NEXON Football Gothic L.otf', 17)
     f = open('save_normal.txt', 'r')
     score_data_normal = json.load(f)
     f.close()

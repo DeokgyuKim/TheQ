@@ -25,6 +25,7 @@ BCC = 0
 Max_Object = 7
 font = None
 BGM = None
+playerCount = 0
 
 def enter():
     global TitleImage
@@ -41,12 +42,14 @@ def enter():
     global Max_Object
     global font
     global BGM
+    global playerCount
 
-    font = load_font('koverwatch.ttf', 40)
+    font = load_font('NEXON Football Gothic L.otf', 35)
     RBC = 0
     BBC = 0
     RCC = 0
     BCC = 0
+    playerCount = 2
 
     TitleImage = load_image('main_game_title.png')
     RedCar = Cars(3)
@@ -96,6 +99,7 @@ def exit():
     del(BlueBox)
     del(font)
     del(BGM)
+
 def handle_events(frame_time):
     global x, y
     events = get_events()
@@ -341,11 +345,12 @@ def update(frame_time):
     global BlueCircle
     global RedBox
     global BlueBox
+    global playerCount
 
     MakeObject(frame_time)
 
-    RedCar.update(frame_time)
-    BlueCar.update(frame_time)
+    RedCar.update(frame_time, playerCount)
+    BlueCar.update(frame_time, playerCount)
 
     for redbox in RedBox:
         if redbox.CX != 0 and redbox.CY != 0:
@@ -363,7 +368,7 @@ def update(frame_time):
     Collision(frame_time)
 
     if BlueCar.Die == True or RedCar.Die == True:
-        game_framework.push_state(Title_State)
+        game_framework.change_state(Title_State)
 def pause():
     pass
 

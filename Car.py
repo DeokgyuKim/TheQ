@@ -49,13 +49,15 @@ class Cars:
         STAND: handle_stand
     }
 
-    def update(self, frame_time):
+    def update(self, frame_time, playerCount):
         if self.Die == False:
             self.life_frame += frame_time
         self.Object_time += frame_time
         self.level_time += frame_time
         if int(self.life_frame * 100) % 100 == 0:
             self.Gage -= 1
+            if playerCount < 2:
+                self.Gage -= 1
         if self.level_time >= 5:
             self.level_time = 0.0
             self.level = min(self.level * 1.1, 2.5)
